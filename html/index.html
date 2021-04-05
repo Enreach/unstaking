@@ -61,7 +61,7 @@
         <div v-if="has_wallet">
        
        <div v-if="tax_airdrop > 0" class="tax" @click="triggerTax">
-                <div>Make {{tax_airdrop}} NRCH by triggering tax</div>
+                <div>Make {{tax_airdrop / decimals}} NRCH by triggering tax</div>
                 <div class="carr">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
@@ -178,7 +178,7 @@
                 nrch_istaked: 0,
                 nrch_unstaked: 0,
                 nrch_staked: 0,
-                tax_airdrop: 1,
+                tax_airdrop: 0,
                 staking_timestamp: 0,
                 lode:0, 
                 decimals: 10**9,
