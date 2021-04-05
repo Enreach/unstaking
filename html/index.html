@@ -339,7 +339,11 @@
                     this.nrch_amount = this.nrch_staked / this.decimals;
                 }
                 var ts = Math.round((new Date()).getTime() / 1000);
-                this.nreachun_contract.methods.yieldCalc(this.nrch_amount * this.decimals, ts - this.staking_timestamp).call().then(res=> {
+                var duration = 0;
+                if ((this.staking_timestamp !=0) && ( this.staking_timestamp < ts)) {
+                    duration = ts - this.staking_timestamp;
+                }
+                this.nreachun_contract.methods.yieldCalc(this.nrch_amount * this.decimals, duration).call().then(res=> {
                     console.log('yield r', res);
                     this.nrch_amountr = res / this.decimals;
                 });
