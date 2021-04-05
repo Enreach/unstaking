@@ -328,7 +328,7 @@
                 method.send({from:this.wallet}).on('transactionHash', function(hash){
                     inapp.addAlert('Transaction sent with hash:'+ hash,'info') 
                 }).then(
-                        res => {console.log(res); inapp.updateContractDataUN();
+                        res => {console.log(res); inapp.updateContractDataUN();inapp.updateContractData();
                             inapp.addAlert('You successfully purchased un staked NRCH tokens','success')}, 
                         res => {console.log('error', res); inapp.has_error=true, inapp.error_message = res}
                         );
