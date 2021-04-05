@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enreach</title>
+    <link rel="shortcut icon" type="image/png" href="./favicon.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="./enreach.css?v=1.23" rel="stylesheet" type="text/css">
+    <link href="./enreach2.css?v=1.2" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div v-if="has-wallet" class="container" id="nrch">
+        <div class="appvis" v-bind:class="{'reveal':reveal}">
+        <div class="hlogo"></div>
+    <div class="hoffset"></div>
+        <div class="usericon">
+            <div>
+                <div class="uinrch">NRCH Balance: <span>{{ Math.round(balance_nreach/decimals)}}</span><img src="encoin.svg" alt="NRCH" class="nrchico" /></div>
+                <div class="uinrch">NRCH Staked: {{ Math.round(nrch_staked/decimals)}}<img src="encoin.svg" alt="NRCH" class="nrchico" /></div>
+                <div class="uiwallet">{{wallet}}<img src="wallet.svg" alt="Wallet" class="walletico" /></div>
+            </div>
+            <!-- <div class="icon">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                    <path class="uicobg" d="M31.98,15.98c0,8.83-7.15,15.98-15.98,15.98S0.03,24.8,0.03,15.98S7.18,0,16.01,0
+                        S31.98,7.15,31.98,15.98z"/>
+                    <path style="fill:#37ECBA;" d="M11.75,11.94c0-2.35,1.9-4.25,4.25-4.25s4.25,1.9,4.25,4.25s-1.9,4.25-4.25,4.25
+                        S11.75,14.29,11.75,11.94z M18.33,18.13c-0.12,0-0.23,0.02-0.34,0.05c-0.62,0.2-1.29,0.33-1.98,0.33c-0.69,0-1.35-0.13-1.98-0.33
+                        c-0.11-0.03-0.23-0.05-0.34-0.05c-2.07,0-3.85,1.18-4.76,2.89c1.7,2.01,4.24,3.3,7.08,3.3s5.38-1.29,7.08-3.3
+                        C22.18,19.3,20.4,18.13,18.33,18.13z"/>
+                </svg>
+            </div> -->
+        </div>
+        
+        
+        <div v-if="has_wallet == false">
+            <div class="connect">
+                <div @click="connectWallet()"><div class="bwalletico">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 28" style="enable-background:new 0 0 32 28;" xml:space="preserve">
+<path d="M32,9v15c0,2.21-1.79,4-4,4H6c-3.31,0-6-2.69-6-6V6c0-3.31,2.69-6,6-6h18c2.21,0,4,1.79,4,4v1C30.21,5,32,6.79,32,9z M29,9
+	c0-0.55-0.45-1-1-1H7C6.45,8,6,7.55,6,7s0.45-1,1-1h18V4c0-0.55-0.45-1-1-1H6C4.35,3,3,4.35,3,6v16c0,1.65,1.35,3,3,3h22
+	c0.55,0,1-0.45,1-1V9z M26,16c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S26,14.9,26,16z"/>
+</svg>
+
+                </div>Connect Wallet</div>
+            </div>
+        </div>
+
+        <div v-if="walletweb3_error">
+            <div class="alert error">
+                No Metamask (or other Web3 Provider) installed
+            </div>
+        </div>
+
+        <div v-if="has_wallet">
+       
+       <div v-if="tax_airdrop > 0" class="tax" @click="triggerTax">
+                <div>Make {{tax_airdrop}} NRCH by triggering tax</div>
+                <div class="carr">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z" />
+                    </svg>
+                </div>
+                
+        </div>
+        <div v-if="tax_airdrop > 0">
+                    Check the cost of gas vs nrch benefits when launching the transaction triggering Tax and consider that many transactions could happen at the same time.
+        </div>
+        <div class="usermeta">
+
+        </div>
+        <div class="alerts" v-if="alerts.length > 0">
+            <div v-for="a in alerts" class="alert" :class="a.atype">{{ a.text }}</div>
+        </div>
+
+        <div class="message">
+            <div style="font-weight: 700;">Welcome to the Enreach Unstacking Platform.</div>
+
+        </div>
+        <div v-if="nrch_staked != 0">
+            <div style="height: 25px;"></div>
+            <div v-if="nrch_staked >0">
+            <div class="ethcont">
+                <div class="inp_label">You Unstake</div>
+                <div class="inp_max" v-if="max_amount">Max Amount {{nrch_staked / decimals}} NRCH</div>
+                <div class="cselectc">
+                    <img src="enreach.svg" alt="ETH">
+                    <div class="currtext">NRCH</div>
+                </div>
+                <input type="number" name="nrch_amount" id="nrchamount" v-model="nrch_amount" class="cur-amount" @input="updateQuote()">
+
+            </div>
+
+
+            <div class="connector">
+                
+            </div>
+
+            <div class="ethcont" style="pointer-events: none;">
+                <div class="arrdown"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z" />
+                    </svg></div>
+                <div class="inp_label">You Receive</div>
+                <div class="currinsig">
+                    <img src="enreach.svg" alt="ETH">
+                    <div class="currtext">NRCH</div>
+                </div>
+
+
+                <input type="number" name="nrch_amountr" id="nrchamount" :value="nrch_amountr" class="cur-amount">
+
+            </div>
+            
+            <div v-if="cr_selected == 'eth'" class="continue" @click="unStake">
+                <div>UnStake</div>
+                <div class="carr">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z" />
+                    </svg>
+                </div>
+            </div>
+
+            </div>
+        </div>
+        <div v-else>
+            <div class="alert error">
+                Your wallet <span style="font-weight: 700;">{{wallet}}</span> is not whitelisted.
+            </div>
+        </div>
+        </div>
+        
+        
+
+        <div class="footer">
+            <div class="cright">© Copyright Enreach DAO 2021.</div>
+        </div>
+    </div>
+    </div>
+</body>
+<!-- script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.1/vue.global.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.1/vue.global.prod.js" integrity="sha512-4phzqI2JDizVa5ofKR+vnC3tGnK3BU5dqTPz5ngJF/LtEDacgDgWcP54M3u9Fh9YqSkwGiu/IH5hQOiOQyvjtA==" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script type="module">
+    const app = {
+        data() {
+            return {
+                vStake: false,
+                has_wallet: null,
+                wallet: '',
+                has_error: false,
+                error_message: '',
+                balance: 0,
+                balance_rfi: 0,
+                balance_rfi_i: 0,
+                balance_nreach: 0,
+                allowance_rfi: 0,
+                max_amount: true,
+                nreach_address: '0x69fa8e7F6bf1ca1fB0de61e1366f7412b827CC51',
+                nreach_contract: false,
+                nreach_json: {},
+                nreachun_address: '0xDf4595F43Ea98454Cb60C4929CB30E2f99AD052d',
+                nreachun: false,
+                nreachun_json: {},
+                nreachun_contract: false,
+                rfi_address: "0xa1afffe3f4d611d252010e3eaf6f4d77088b0cd7",
+                rfi_json: {},
+                rfi_contract: false,
+                nrch_istaked: 0,
+                nrch_unstaked: 0,
+                nrch_staked: 0,
+                tax_airdrop: 1,
+                staking_timestamp: 0,
+                lode:0, 
+                decimals: 10**9,
+                nrch_amount: 0,
+                nrch_amountr: 0,
+                stake_days:182,
+                alerts: [],
+                cr_selected: 'eth',
+                vPagree: true,
+                aPagree: false,
+                walletweb3_error:false,
+                reveal:false
+            }
+        },
+        methods: {
+            fetchJson: function(url, callback) {
+                fetch(url, { method: 'get', headers: { 'content-type': 'application/json'}}).then(
+                    res => res.json()).then(json => callback(json)
+                )
+            },
+            showStake: function () {
+                if (this.cr_selected != "rfi") {
+                    this.vStake = !this.vStake;
+                    this.updateEthQuote();
+                }
+            },
+            addAlert: function(text,atype) {
+                this.alerts.push({text:text,atype:atype});
+                let msgs = document.getElementsByClassName("meta")[0];
+                msgs.scrollIntoView({behavior: "smooth", block: "center"});
+            },
+            clearAlerts: function() {
+                this.alerts = []
+            },
+            initWallet(result) {
+                window.sale = this
+                console.log("result", result);
+                if (result.length != 0) {
+                    this.wallet = result[0];
+                    this.has_wallet = true;
+                    var inapp = this
+                    window.web3.eth.getBalance(this.wallet).then(
+                        function(result){
+                            inapp.balance = window.web3.utils.fromWei(result);
+                            console.log('balance', inapp.balance)
+                        }, console.log
+                    );
+                    this.fetchJson("NreachUN.json?v=0.3", function(res) {
+                        inapp.nreachun_json = res;
+                        inapp.nreachun_contract = new window.web3.eth.Contract(res, inapp.nreachun_address);
+                        inapp.nreachun = true;
+                        window.contract = inapp.nreachun_contract;
+                        inapp.updateContractDataUN();
+                    });
+                    this.fetchJson("Nreach.json?v=0.3", function(res) {
+                        inapp.nreach_json = res;
+                        inapp.nreach_contract = new window.web3.eth.Contract(res, inapp.nreach_address);
+                        inapp.nreach = true;
+                        window.tokencontract = inapp.nreach_contract;
+                        inapp.updateContractData();
+                    });
+                }
+                else {
+                    this.has_wallet = false;
+                }
+
+            },
+            errorWallet(error) {
+                this.has_error = true;
+                console.log(error);
+            },
+            connectWallet() {
+                if (typeof window.ethereum !== "undefined") {
+                    window.web3 = new Web3(window.ethereum);
+                    window.ethereum.enable().then(() => {
+                        window.web3.eth.getAccounts().then(this.initWallet, this.errorWallet);
+                    }, this.errorWallet);
+                }
+            },
+            checkWallet() {
+                if (typeof window.ethereum !== "undefined") {
+                    window.web3 = new Web3(window.ethereum);
+                    window.web3.eth.getAccounts().then(this.initWallet, this.errorWallet);
+                    // this.has_wallet = true;
+                } else if (window.web3) {
+                    window.web3 = new Web3(window.web3.currentProvider);
+                    window.web3.eth.getAccounts().then(this.initWallet, this.errorWallet);
+                    // this.has_wallet = true;
+                } else {
+                    console.log("No Metamask (or other Web3 Provider) installed");
+                    this.walletweb3_error=true;
+                }
+            },
+            updateContractData() {
+                this.nreach_contract.methods.balanceOf(this.wallet).call().then(res => {
+                    console.log('nreach balance', res);
+                    this.balance_nreach = res;
+                })
+                this.nreach_contract.methods.simTaxAirDrop().call().then(res => {
+                    console.log('nreach balance', res);
+                    this.tax_airdrop = res;
+                })
+
+                
+                
+            },
+            updateContractDataUN() {
+
+                this.nreachun_contract.methods.limits(this.wallet).call().then(res => {
+                    console.log('nreach un', res);
+                    this.nrch_istaked = res[2];
+                    
+                    this.nreachun_contract.methods.stakingTS().call().then( res => {
+                        this.staking_timestamp = res;    
+                    });
+                    this.nreachun_contract.methods.unstakedAccounts(this.wallet).call().then(res => {
+                        console.log('nreach un(2)', res);
+                        this.nrch_unstaked = res.nrch_unstaked
+                        this.nrch_staked = this.nrch_istaked - this.nrch_unstaked;
+                        this.nrch_amount = this.nrch_staked / this.decimals;
+                        this.updateQuote();
+                    });
+                    
+                });
+                
+                
+            },
+            triggerTax(){
+                var inapp = this;
+                this.nreach_contract.methods.triggerDistributeTax().send({from:this.wallet}).on('transactionHash', 
+                    function(hash){ inapp.addAlert('Transaction sent with hash:'+ hash,'info') 
+                }).then(
+                        res => {console.log(res); inapp.updateContractData();
+                            inapp.addAlert('You successfully triggered Taxed','success')}, 
+                        res => {console.log('error', res); inapp.has_error=true, inapp.error_message = res}
+                        );
+        
+                
+            },
+            unStake() {
+                var inapp = this;
+                var balance_wei = web3.utils.toWei(inapp.balance);
+                var method = this.nreachun_contract.methods.unStake(this.nrch_amount * this.decimals);
+                method.send({from:this.wallet}).on('transactionHash', function(hash){
+                    inapp.addAlert('Transaction sent with hash:'+ hash,'info') 
+                }).then(
+                        res => {console.log(res); inapp.updateContractDataUN();
+                            inapp.addAlert('You successfully purchased un staked NRCH tokens','success')}, 
+                        res => {console.log('error', res); inapp.has_error=true, inapp.error_message = res}
+                        );
+        
+
+            },
+            updateQuote() {
+                this.max_amount = false;
+                if (this.nrch_amount * this.decimals >= this.nrch_staked) {
+                    this.max_amount = true;
+                    this.nrch_amount = this.nrch_staked / this.decimals;
+                }
+                var ts = Math.round((new Date()).getTime() / 1000);
+                this.nreachun_contract.methods.yieldCalc(this.nrch_amount * this.decimals, ts - this.staking_timestamp).call().then(res=> {
+                    console.log('yield r', res);
+                    this.nrch_amountr = res / this.decimals;
+                });
+                    
+
+            },
+        },
+        created(){
+        },
+        beforeMount(){
+            this.checkWallet();
+        },
+        mounted(){
+            this.reveal = true;
+        },
+        setup(props) {
+
+        },
+    };
+    const { createApp } = Vue;
+    Vue.createApp(app).mount("#nrch");
+</script>
+</script>
+
+</html>
