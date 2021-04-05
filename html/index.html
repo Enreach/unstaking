@@ -59,7 +59,7 @@
         </div>
 
         <div v-if="has_wallet">
-       
+
        <div v-if="tax_airdrop > 0" class="tax" @click="triggerTax">
                 <div>Make {{tax_airdrop / decimals}} NRCH by triggering tax</div>
                 <div class="carr">
@@ -72,6 +72,9 @@
         </div>
         <div v-if="tax_airdrop > 0">
                     Check the cost of gas vs nrch benefits when launching the transaction triggering Tax and consider that many transactions could happen at the same time.
+        </div>
+        <div class="meta">
+           
         </div>
         <div class="usermeta">
 
