@@ -348,7 +348,7 @@
                 if ((this.staking_timestamp !=0) && ( this.staking_timestamp < ts)) {
                     duration = ts - this.staking_timestamp;
                 }
-                this.nreachun_contract.methods.yieldCalc(this.nrch_amount * this.decimals, duration).call().then(res=> {
+                this.nreachun_contract.methods.yieldCalc(parseInt(this.nrch_amount * this.decimals), duration).call().then(res=> {
                     console.log('yield r', res);
                     this.nrch_amountr = res / this.decimals;
                 });
