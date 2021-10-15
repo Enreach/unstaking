@@ -325,7 +325,7 @@
             unStake() {
                 var inapp = this;
                 var balance_wei = web3.utils.toWei(inapp.balance);
-                var method = this.nreachun_contract.methods.unStake(this.nrch_amount * this.decimals);
+                var method = this.nreachun_contract.methods.unStake(parseInt(this.nrch_amount * this.decimals));
                 method.send({from:this.wallet}).on('transactionHash', function(hash){
                     inapp.addAlert('Transaction sent with hash:'+ hash,'info') 
                 }).then(
